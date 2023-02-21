@@ -1,0 +1,164 @@
+﻿@model List<Urun>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    .has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+    .product-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center
+    }
+
+    .product-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 300px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        margin: 20px;
+        background-color: white;
+        padding-bottom: 1%
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .product-name {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .product-description {
+        font-size: 0.875rem;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .product-price {
+        font-size: 1.125rem;
+        font-weight: bold;
+        margin: 10px 0;
+        color: orange;
+    }
+
+    .add-to-cart-button {
+        padding: 10px 20px;
+        background-color: orange;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 0.875rem;
+        cursor: pointer;
+    }
+
+        .add-to-cart-button:hover {
+            background-color: darkorange;
+        }
+
+    .product-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: lightgray;
+        font-size: 0.875rem;
+    }
+
+    .discount-price {
+        color: orange;
+        font-size: 1.125rem;
+        font-weight: bold;
+    }
+</style>
+
+
+<div class="form-group has-search">
+    <span  class="fa fa-search form-control-feedback"><i class="bi bi-search"></i></span>
+    <input id="search" type="text" class="form-control" placeholder="Search">
+</div>
+
+<div class="product-container">
+
+    @foreach (var item in Model)
+    {
+         <div id="@item.Id" class="product-card">
+            <img style="object-fit:contain;" src="@item.Fotograf" alt="Product Name" class="product-image">
+            <h3 class="product-name">@item.Ad</h3>
+            <p class="product-description">@item.Aciklama</p>
+            <div class="product-price">@item.Fiyat</div>
+            <button class="add-to-cart-button">Add to Cart</button>
+        </div>
+
+
+    }
+
+</div>
+
+
+ @section  Scripts{
+
+    <script>
+
+        $('#search').keyup(function () {
+
+           let value = $(this).val();
+ 
+            var url = "@Url.Action("UrunBul", "Home")";
+            $.ajax({
+                url: url,
+                data: {value: value},
+                type: "POST",
+                success: function (response) {
+                    let array = [];
+                    $('.product-card').each(function(i, e){
+                        $(response).each(function (i1, e1) {
+                            if($(e).attr("id") === e1.id){
+                                array.push(e1.id)
+                            }
+                        });
+                    });
+                    console.log(array)
+                    $('.product-card').each(function(i, e){                      
+                        if (array.find(element => element === $(e).attr("id")) === undefined) {
+                            $(e).hide();
+                        }else{
+                            $(e).show();
+                        }
+                    });
+                },
+                error: function (hata, ajaxoptions, throwerror) {
+                    alert("Hata :" + hata.status + " " + throwerror + " " + hata.responseText);
+                }
+            });
+
+        });
+    </script>
+}
