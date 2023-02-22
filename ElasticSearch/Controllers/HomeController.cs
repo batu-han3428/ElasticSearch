@@ -112,8 +112,23 @@ namespace ElasticSearch.Controllers
             try
             {
                 var urunler = elasticClient.Search<Urun>(s => s
-    .Query(x=>x.Bool(x=>x.Filter(x=>x.Bool(x=>x.Should(x=>x.QueryString(x=>x.DefaultField("ad").Query("*"+value+"*").DefaultOperator(Operator.And)))))))
-).Documents.ToList();
+                                                .Query(x=>x
+                                                    .Bool(x=>x
+                                                        .Filter(x=>x
+                                                            .Bool(x=>x
+                                                                .Should(x=>x
+                                                                    .QueryString(x=>x
+                                                                        .DefaultField("ad")
+                                                                        .Query("*"+value+"*")
+                                                                        .DefaultOperator(Operator.And)
+                                                                        )
+                                                                    )
+                                                                
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                ).Documents.ToList();
                 return urunler;
             }
             catch (Exception ex)
