@@ -40,7 +40,7 @@ namespace ElasticSearch.Controllers
             Urun urun1 = new Urun()
             {
                 Id = "1",
-                Ad = "Samsung_A50",
+                Ad = "Samsung A50 Yeni",
                 Aciklama = "Samsung A50 yeni model",
                 Fiyat = "10.000TL",
                 Fotograf = "https://cdn.shopify.com/s/files/1/0289/5790/0859/products/samsung-a50-screen-repair-funtech-repair-sama50lcd.jpg?v=1591806465"
@@ -111,60 +111,9 @@ namespace ElasticSearch.Controllers
         {
             try
             {
-
-                //var urunler = elasticClient.Search<Urun>(s => s
-                //  .Index("urunler")
-                //  .Query(q => q.MatchPhrase(m => m
-                //      .Field(f => f.Ad)
-                //      .Query(value)))).Documents.ToList();
-
-                //var urunler = elasticClient.Search<Urun>
-                // (s => s
-                // .Query(query => query.Match(x => x.(x => x.Ad).Value(value)))).Documents.ToList();
-
-                //var urunler = elasticClient.Search<Urun>
-                // (s => s
-                // .Query(query => query.Match(b => b.Name("*"+value+"*")
-                // ))).Documents.ToList();
-                var urunler = elasticClient.Search<Urun>
-                (s => s.From(0)
-                .Query(query => query.Bool(b => b.Must(
-                    x => x.Wildcard(x => x.Field("ad").Value("*" + value + "*"))
-                )))).Documents.ToList();
-
-                //var urunler = elasticClient.Search<Urun>
-                // (s => s.From(0)
-                // .Query(query => query.Bool(b => b.Must(
-                //     x => x.Wildcard(x => x.Field("ad").Value("*" + value.Replace(" ","_") + "*"))
-                // )))).Documents.ToList();
-
-                // var urunler = elasticClient.Search<Urun>
-                //(s => s.From(0).Query(query => query.QueryString(x=>x.Fields(x=>x.Field(x=>x.Ad)).Query("*"+value+" *"))
-
-                //)
-                //).Documents.ToList();
-
-                //match
-                //if (value != "")
-                //{
-                //    var veri = value.Replace(@" ", @"\").Substring(0, 8);
-                //}
-
-                //   var urunler = elasticClient.Search<Urun>
-                // (s => s.From(0)
-                // .Query(query => query.Bool(b => b.Must(
-                //      sd => sd.MatchPhrase(m => m
-                //    .Field(f => f.Ad)
-                //    .Query(value)
-                //    ),
-                //sd => sd.Terms(m => m
-                //    .Field(f => f.Ad)
-                //    .Terms<string>(" *" + value + "*")
-                //    )
-                // )))).Documents.ToList();
-
-                //    matchall
-
+                var urunler = elasticClient.Search<Urun>(s => s
+    .Query(x=>x.Bool(x=>x.Filter(x=>x.Bool(x=>x.Should(x=>x.QueryString(x=>x.DefaultField("ad").Query("*"+value+"*").DefaultOperator(Operator.And)))))))
+).Documents.ToList();
                 return urunler;
             }
             catch (Exception ex)
